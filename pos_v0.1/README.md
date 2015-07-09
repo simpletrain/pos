@@ -23,7 +23,6 @@ POS收银机 版本：v0.1
         name: '可口可乐',
         unit: '瓶',
         price: 3.00
-
     },
     {
         barcode: 'ITEM000000',
