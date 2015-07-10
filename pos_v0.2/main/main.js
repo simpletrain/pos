@@ -1,7 +1,7 @@
 function printReceipt(inputs) {
   var outputs;
   var posHead = '***<没钱赚商店>收据***\n';
-  var posBody = getPosBody(getTogether(getItem(inputs)));
+  var posBody = getPosBody(deleteDuplication(getItemInfo(inputs)));
   var posList = posBody.posList;
   var totalCost = posBody.totalCost;
   var posLine = '----------------------\n';
@@ -24,7 +24,7 @@ function getPosBody(inputsArray) {
   return {posList: list, totalCost: sumPrice};
 }
 
-function getTogether(originList) {
+function deleteDuplication(originList) {
   var newList = [];
   var barcodeNow = '';
   for (var i = 0; i < originList.length; i++) {
@@ -32,15 +32,14 @@ function getTogether(originList) {
       newList.push(originList[i]);
       newList[newList.length - 1].count = 1;
       barcodeNow = originList[i].barcode;
-    }
-    else {
+    } else {
       newList[newList.length - 1].count++;
     }
   }
   return newList;
 }
 
-function getItem(originList) {
+function getItemInfo(originList) {
   var newList = [];
   for (var i = 0; i < originList.length; i++) {
     var itemList = findItemList(originList[i]);
