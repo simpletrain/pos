@@ -16,11 +16,29 @@ function printReceipt(inputs) {
 function freeList(itemArray) {
   var list = '挥泪赠送商品：\n';
   for (var i = 0; i < itemArray.length; i++) {
-    if (itemArray[i].count > 2) {
-      list += '名称：' + itemArray[i].name + '，数量：1' + itemArray[i].unit + '\n'
-    }
+    list += promotionsKind(itemArray[i], 'printout freelist');
   }
   return list;
+}
+
+function promotionsKind(item, usage) {
+  var allPromotions = loadPromotions();
+  var promotionInfo;
+  for (var i = 0; i < allPromotions.length; i++) {
+    if (allPromotions[i].barcodes.indexOf(item.barcode)) {
+      promotionInfo = allPromotions[i].type;
+    }
+  }
+  if (promotionInfo === 'BUY_TWO_GET_ONE_FREE') {
+    if (usage === 'calculate discount') {
+      return (item.count > 2) ? 1 : 0;
+    } else if (usage === 'printout freelist') {
+      return (item.count > 2) ? '名称：' + item.name + '，数量：1' + item.unit + '\n' : '';
+    }
+  }
+  else {
+    return 0;
+  }
 }
 
 function getPosBody(inputsArray) {
@@ -28,7 +46,7 @@ function getPosBody(inputsArray) {
   var sumPrice = 0;
   var saveMoney = 0;
   for (var i = 0; i < inputsArray.length; i++) {
-    var discount = (inputsArray[i].count > 2) ? 1 : 0;
+    var discount = promotionsKind(inputsArray[i], 'calculate discount');
     var itemCost = (inputsArray[i].count - discount) * inputsArray[i].price;
     list += '名称：' + inputsArray[i].name
       + '，数量：' + inputsArray[i].count + inputsArray[i].unit
@@ -79,5 +97,4 @@ function findItemList(itemA) {
   }
   return itemList;
 }
-
 
