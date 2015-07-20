@@ -1,25 +1,42 @@
-function printReceipt(inputs) {
-  var outputs;
-  var posHead = '***<没钱赚商店>收据***\n';
-  var posBody = getPosBody(inputs);
-  var posList = posBody.posList;
-  var totalCost = posBody.totalCost;
-  var posLine = '----------------------\n';
-  var posTotalCost = '总计：' + totalCost.toFixed(2) + '(元)\n';
-  var posEnd = '**********************';
-  outputs = posHead + posList + posLine + posTotalCost + posEnd;
-  console.log(outputs);
+function printReceipt(items) {
+  var receipt =
+    '***<没钱赚商店>收据***\n' +
+    getItemsString(items) +
+    '----------------------\n' +
+    '总计：' + formatPrice(getAmount(items)) + '(元)\n' +
+    '**********************';
+
+  console.log(receipt);
 }
 
-function getPosBody(inputsArray) {
-  var list = '';
-  var sumPrice = 0;
-  for (var i = 0; i < inputsArray.length; i++) {
-    list += '名称：' + inputsArray[i].name
-      + '，数量：' + inputsArray[i].count + inputsArray[i].unit
-      + '，单价：' + inputsArray[i].price.toFixed(2) + '(元)'
-      + '，小计：' + (inputsArray[i].count * inputsArray[i].price).toFixed(2) + '(元)\n';
-    sumPrice += inputsArray[i].count * inputsArray[i].price;
-  }
-  return {posList: list, totalCost: sumPrice};
+function getSubTotal(count, price) {
+  return count * price;
+}
+
+function getAmount(items) {
+  var amount = 0;
+
+  items.forEach(function (item) {
+    amount += getSubTotal(item.count, item.price);
+  });
+
+  return amount;
+}
+
+function getItemsString(items) {
+  var itemsString = '';
+
+  items.forEach(function (item) {
+    itemsString +=
+      '名称：' + item.name +
+      '，数量：' + item.count + item.unit +
+      '，单价：' + formatPrice(item.price) +
+      '(元)，小计：' + formatPrice(getSubTotal(item.count, item.price)) + '(元)\n';
+  });
+
+  return itemsString;
+}
+
+function formatPrice(price) {
+  return price.toFixed(2);
 }
