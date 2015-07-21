@@ -1,6 +1,5 @@
-function printReceipt(barcodes) {
-  var items = getItems(barcodes);
-  var cartItems = getCartItems(items);
+function printReceipt(tags) {
+  var cartItems = getCartItems(tags);
   var receipt =
     '***<没钱赚商店>收据***\n' +
     getItemsString(cartItems) +
@@ -13,66 +12,58 @@ function printReceipt(barcodes) {
   console.log(receipt);
 }
 
-function getItems(barcodes) {
-  var items = [];
-  barcodes.forEach(function (barcode) {
-    var item = findItem(barcode.substr(0, 10));
-    if (item) {
-      items = pushItem(items, item, barcode.substr(11));
+function getCartItems(tags) {
+  var cartItems = [];
+  tags.forEach(function (tag) {
+    var splitedBarcode = tag.split('-');
+    var barcode = splitedBarcode[0];
+    var item = findItem(barcode);
+    var count = splitedBarcode[1] || 1;
+    var cartItem = findCartItem(cartItems, barcode);
+    if (cartItem) {
+      cartItem.count++;
     } else {
-      console.log('error');
+      var type = getPromotionType(barcode);
+      cartItems.push({item: item, count: count, type: type});
     }
   });
-  return items;
+
+  return cartItems;
 }
 
 function findItem(barcode) {
   var allItems = loadAllItems();
-  var itemInfo;
+  var item;
   for (var i = 0; i < allItems.length; i++) {
     if (barcode === allItems[i].barcode) {
-      itemInfo = allItems[i];
+      item = allItems[i];
       break;
     }
   }
-  return itemInfo;
-}
-
-function pushItem(items, item, count) {
-  if (count) {
-    for (var i = 0; i < parseInt(count); i++) {
-      items.push(item);
-    }
-  } else {
-    items.push(item)
-  }
-  return items;
-}
-
-
-function getCartItems(items) {
-  var cartItems = [];
-  items.forEach(function (item) {
-    var cartItem = findCartItem(cartItems, item.barcode);
-    if (cartItem) {
-      cartItem.count++;
-    } else {
-      cartItems.push({item: item, count: 1});
-    }
-  });
-  return cartItems;
+  return item;
 }
 
 function findCartItem(cartItems, barcode) {
-  var foundCartItem;
+  var cartItem;
   for (var i = 0; i < cartItems.length; i++) {
-    if (cartItems[i].item.barcode === barcode) {
-      foundCartItem = cartItems[i];
+    if (barcode === cartItems[i].item.barcode) {
+      cartItem = cartItems[i];
       break;
     }
   }
-  return foundCartItem;
+  return cartItem;
 }
+
+function getPromotionType(barcode) {
+  var promotionType;
+  for (var i = 0; i < loadPromotions().length; i++) {
+    if (loadPromotions()[i].barcodes.indexOf(barcode) !== -1) {
+      promotionType = loadPromotions()[i].type;
+    }
+  }
+  return promotionType;
+}
+
 
 function getItemsString(cartItems) {
   var itemsString = '';
@@ -83,15 +74,17 @@ function getItemsString(cartItems) {
       '名称：' + item.name +
       '，数量：' + cartItem.count + item.unit +
       '，单价：' + formatPrice(item.price) +
-      '(元)，小计：' + formatPrice(getSubTotal(cartItem.count, item.price) - discount(cartItem)) + '(元)\n';
+      '(元)，小计：' + formatPrice(getSubTotal(cartItem.count, item.price) - discount(cartItem))
+      + '(元)\n';
   });
 
   return itemsString;
 }
 
 function discount(cartItem) {
-  if (loadPromotions()[0].barcodes.indexOf(cartItem.item.barcode) !== -1) {
-    return Math.floor(cartItem.count / 3) * cartItem.item.price;
+  var item = cartItem.item;
+  if (cartItem.type === 'BUY_TWO_GET_ONE_FREE') {
+    return Math.floor(cartItem.count / 3) * item.price;
   }
   return 0;
 }
@@ -115,7 +108,7 @@ function getPromotionString(cartItems) {
   var promotionString = '挥泪赠送商品：\n';
 
   cartItems.forEach(function (cartItem) {
-    if (loadPromotions()[0].barcodes.indexOf(cartItem.item.barcode) !== -1) {
+    if (cartItem.type === 'BUY_TWO_GET_ONE_FREE') {
       if (cartItem.count > 2) {
         var item = cartItem.item;
         promotionString +=
@@ -133,10 +126,9 @@ function getTotalSave(cartItems) {
   var totalSave = 0;
 
   cartItems.forEach(function (cartItem) {
-    if (loadPromotions()[0].barcodes.indexOf(cartItem.item.barcode) !== -1) {
-      if (cartItem.count > 2) {
-        totalSave += Math.floor(cartItem.count / 3) * cartItem.item.price;
-      }
+    if (cartItem.type === 'BUY_TWO_GET_ONE_FREE') {
+      var item = cartItem.item;
+      totalSave += Math.floor(cartItem.count / 3) * item.price;
     }
   });
 
