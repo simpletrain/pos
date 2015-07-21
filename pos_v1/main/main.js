@@ -75,33 +75,6 @@ function findCartItem(cartItems, barcode) {
   return foundCartItem;
 }
 
-function getSubTotal(count, price) {
-  return count * price;
-}
-
-function getAmount(cartItems) {
-  var amount = 0;
-
-  cartItems.forEach(function (cartItem) {
-    var item = cartItem.item;
-    amount += getSubTotal(cartItem.count, item.price);
-  });
-  amount -= getTotalSave(cartItems);
-  return amount;
-}
-
-function getTotalSave(cartItems) {
-  var totalSave = 0;
-
-  cartItems.forEach(function (cartItem) {
-    if (cartItem.count > 2) {
-      totalSave += cartItem.item.price;
-    }
-  });
-
-  return totalSave;
-}
-
 function getItemsString(cartItems) {
   var itemsString = '';
 
@@ -118,25 +91,58 @@ function getItemsString(cartItems) {
 }
 
 function discount(cartItem) {
-  return ((cartItem.count > 2) ? 1 : 0) * cartItem.item.price;
+  if (loadPromotions()[0].barcodes.indexOf(cartItem.item.barcode) !== -1) {
+    return ((cartItem.count > 2) ? 1 : 0) * cartItem.item.price;
+  }
+  return 0;
+}
+
+function getAmount(cartItems) {
+  var amount = 0;
+
+  cartItems.forEach(function (cartItem) {
+    var item = cartItem.item;
+    amount += getSubTotal(cartItem.count, item.price);
+  });
+  amount -= getTotalSave(cartItems);
+  return amount;
+}
+
+function getSubTotal(count, price) {
+  return count * price;
 }
 
 
 function getPromotionString(cartItems) {
   var promotionString = '挥泪赠送商品：\n';
-
   cartItems.forEach(function (cartItem) {
-    if (cartItem.count > 2) {
-      var item = cartItem.item;
-      promotionString +=
-        '名称：' + item.name +
-        '，数量：' + 1 + item.unit + '\n';
+    if (loadPromotions()[0].barcodes.indexOf(cartItem.item.barcode) !== -1) {
+      if (cartItem.count > 2) {
+        var item = cartItem.item;
+        promotionString +=
+          '名称：' + item.name +
+          '，数量：' + 1 + item.unit + '\n';
+      }
     }
   });
 
   return promotionString;
 }
 
+
+function getTotalSave(cartItems) {
+  var totalSave = 0;
+
+  cartItems.forEach(function (cartItem) {
+    if (loadPromotions()[0].barcodes.indexOf(cartItem.item.barcode) !== -1) {
+      if (cartItem.count > 2) {
+        totalSave += cartItem.item.price;
+      }
+    }
+  });
+
+  return totalSave;
+}
 
 function formatPrice(price) {
   return price.toFixed(2);
