@@ -30,12 +30,12 @@ function getItems(barcodes) {
 function findItem(barcode) {
   var allItems = loadAllItems();
   var itemInfo;
-  allItems.forEach(function (item) {
-    if (barcode === item.barcode) {
-      itemInfo = item;
-      return false;
+  for (var i = 0; i < allItems.length; i++) {
+    if (barcode === allItems[i].barcode) {
+      itemInfo = allItems[i];
+      break;
     }
-  });
+  }
   return itemInfo;
 }
 
@@ -66,12 +66,12 @@ function getCartItems(items) {
 
 function findCartItem(cartItems, barcode) {
   var foundCartItem;
-  cartItems.forEach(function (cartItem) {
-    if (cartItem.item.barcode === barcode) {
-      foundCartItem = cartItem;
-      return false;
+  for (var i = 0; i < cartItems.length; i++) {
+    if (cartItems[i].item.barcode === barcode) {
+      foundCartItem = cartItems[i];
+      break;
     }
-  });
+  }
   return foundCartItem;
 }
 
