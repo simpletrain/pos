@@ -4,6 +4,7 @@ function printReceipt(tags) {
   var myPos = new Pos(scanner, myCart);
 
   myPos.scan(tags);
+  PromotionProcessor.CalculatePromotion(myCart);
 
   console.log(myPos.printReceipt());
 

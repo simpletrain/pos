@@ -1,6 +1,7 @@
 function Cart() {
   this.cartItems = [];
-
+  this.globalType = PromotionProcessor.findGlobalType();
+  this.save = 0;
 }
 
 
@@ -26,31 +27,3 @@ Cart.prototype.findInCart = function (cartItem) {
   return -1;
 };
 
-
-Cart.prototype.getItemString = function () {
-  var itemsString = '';
-
-  this.cartItems.forEach(function (cartItem) {
-    var item = cartItem.item;
-
-    itemsString +=
-      '名称：' + item.name +
-      '，数量：' + cartItem.count + item.unit +
-      '，单价：' + Utils.formatPrice(item.price) +
-      '(元)，小计：' + Utils.formatPrice(Utils.getSubTotal(cartItem.count, item.price))
-      + '(元)\n';
-  });
-
-  return itemsString;
-};
-
-Cart.prototype.getAmount = function () {
-  var amount = 0;
-
-  this.cartItems.forEach(function (cartItem) {
-    var item = cartItem.item;
-    amount += Utils.getSubTotal(cartItem.count, item.price);
-  });
-  return amount;
-
-};
