@@ -6,15 +6,21 @@ function Cart() {
 
 }
 
+
 Cart.prototype.addCartItem = function (cartItem) {
+
   this.cartItems.push(cartItem);
+
 };
+
+
 
 Cart.prototype.getItemString = function (cart) {
   var itemsString = '';
 
   cart.cartItems.forEach(function (cartItem) {
     var item = cartItem.item;
+
     itemsString +=
       '名称：' + item.name +
       '，数量：' + cartItem.count + item.unit +
@@ -25,6 +31,8 @@ Cart.prototype.getItemString = function (cart) {
 
   return itemsString;
 };
+
+
 
 Cart.prototype.getPromotionString = function (cart) {
   var promotionString = '挥泪赠送商品：\n';
@@ -43,6 +51,8 @@ Cart.prototype.getPromotionString = function (cart) {
   return promotionString;
 };
 
+
+
 Cart.prototype.getAmount = function (cart) {
   var amount = 0;
 
@@ -51,6 +61,7 @@ Cart.prototype.getAmount = function (cart) {
     amount += getSubTotal(cartItem.count, item.price);
   });
   return amount;
+
 };
 
 Cart.prototype.getTotalSave = function (cart) {
@@ -61,4 +72,5 @@ Cart.prototype.getTotalSave = function (cart) {
   });
 
   return totalSave;
+
 };

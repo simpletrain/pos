@@ -1,5 +1,5 @@
-function printReceipt(itemBarcodes) {
-  var items = getItems(itemBarcodes);
+function printReceipt(barcodes) {
+  var items = getItems(barcodes);
   var cartItems = getCartItems(items);
   var receipt =
     '***<没钱赚商店>收据***\n' +
@@ -10,10 +10,10 @@ function printReceipt(itemBarcodes) {
 
   console.log(receipt);
 }
-function getItems(itemBarcodes) {
+function getItems(barcodes) {
   var items = [];
-  itemBarcodes.forEach(function (barcode) {
-    var item = findItemInfo(barcode);
+  barcodes.forEach(function (barcode) {
+    var item = findItem(barcode);
     if (item) {
       items.push(item);
     } else {
@@ -23,7 +23,7 @@ function getItems(itemBarcodes) {
   return items;
 }
 
-function findItemInfo(barcode) {
+function findItem(barcode) {
   var allItems = loadAllItems();
   var itemInfo;
   allItems.forEach(function (item) {

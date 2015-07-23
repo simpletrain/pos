@@ -36,7 +36,7 @@ Pos.findItem = function (barcode) {
 };
 
 Pos.findInCart = function (cart, barcode) {
-  for (var i = 0; i < cart.cartItems.length; i++) {
+  for (var i = 0; i < cart .cartItems.length; i++) {
     if (barcode === cart.cartItems[i].item.barcode) {
       return true;
     }
