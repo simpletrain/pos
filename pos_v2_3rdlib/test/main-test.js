@@ -1,4 +1,4 @@
-describe('pos', function() {
+describe('pos.js', function () {
   var allItems, inputs, dateDigitToString;
 
   beforeEach(function() {
