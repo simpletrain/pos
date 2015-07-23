@@ -1,6 +1,8 @@
 function printReceipt(tags) {
   var myCart = new Cart();
+
   Pos.getItemsIn(myCart, tags);
+
   var receipt =
     '***<没钱赚商店>收据***\n' +
     '打印时间：' + Pos.getTime() + '\n' +
@@ -13,6 +15,7 @@ function printReceipt(tags) {
     '节省：' + formatPrice(myCart.getTotalSave(myCart)) + '(元)\n' +
     '**********************';
   console.log(receipt);
+
 }
 
 
